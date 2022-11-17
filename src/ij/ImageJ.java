@@ -72,6 +72,7 @@ The following command line options are recognized by ImageJ:
   -debug
      Runs ImageJ in debug mode
 </pre>
+
 @author Wayne Rasband (rasband@gmail.com)
 */
 public class ImageJ extends Frame implements ActionListener, 
