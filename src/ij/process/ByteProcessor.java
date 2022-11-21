@@ -597,7 +597,7 @@ public class ByteProcessor extends ImageProcessor {
 				p7 = p8; p8 = p9;
 				p9 = pixels2[offset+rowOffset+1]&0xff;
 
-				switch (type) {
+				switch(type) {
 					case BLUR_MORE:
 						sum = (p1+p2+p3+p4+p5+p6+p7+p8+p9+4)/9;
 						break;
@@ -613,64 +613,16 @@ public class ByteProcessor extends ImageProcessor {
 						sum = findMedian(values);
 						break;
 					case MIN:
-						sum = p5;
-						if (p1<sum) sum = p1;
-						if (p2<sum) sum = p2;
-						if (p3<sum) sum = p3;
-						if (p4<sum) sum = p4;
-						if (p6<sum) sum = p6;
-						if (p7<sum) sum = p7;
-						if (p8<sum) sum = p8;
-						if (p9<sum) sum = p9;
+						sum = this.caseMin(p1, p2, p3, p4, p5, p6, p7, p8, p9);
 						break;
 					case MAX:
-						sum = p5;
-						if (p1>sum) sum = p1;
-						if (p2>sum) sum = p2;
-						if (p3>sum) sum = p3;
-						if (p4>sum) sum = p4;
-						if (p6>sum) sum = p6;
-						if (p7>sum) sum = p7;
-						if (p8>sum) sum = p8;
-						if (p9>sum) sum = p9;
+						sum = this.caseMax(p1, p2, p3, p4, p5, p6, p7, p8, p9);
 						break;
 					case ERODE:
-						if (p5==binaryBackground)
-							sum = binaryBackground;
-						else {
-							count = 0;
-							if (p1==binaryBackground) count++;
-							if (p2==binaryBackground) count++;
-							if (p3==binaryBackground) count++;
-							if (p4==binaryBackground) count++;
-							if (p6==binaryBackground) count++;
-							if (p7==binaryBackground) count++;
-							if (p8==binaryBackground) count++;
-							if (p9==binaryBackground) count++;							
-							if (count>=binaryCount)
-								sum = binaryBackground;
-							else
-							sum = binaryForeground;
-						}
+						sum = this.caseErode(binaryForeground, binaryBackground, p1, p2, p3, p4, p5, p6, p7, p8, p9);
 						break;
 					case DILATE:
-						if (p5==binaryForeground)
-							sum = binaryForeground;
-						else {
-							count = 0;
-							if (p1==binaryForeground) count++;
-							if (p2==binaryForeground) count++;
-							if (p3==binaryForeground) count++;
-							if (p4==binaryForeground) count++;
-							if (p6==binaryForeground) count++;
-							if (p7==binaryForeground) count++;
-							if (p8==binaryForeground) count++;
-							if (p9==binaryForeground) count++;							
-							if (count>=binaryCount)
-								sum = binaryForeground;
-							else
-								sum = binaryBackground;
-						}
+						sum = this.caseDilate(binaryForeground, binaryBackground, p1, p2, p3, p4, p5, p6, p7, p8, p9);
 						break;
 				}
 				
@@ -705,7 +657,7 @@ public class ByteProcessor extends ImageProcessor {
 				p4=getEdgePixel(pixels2,x-1,y); p5=getEdgePixel(pixels2,x,y); p6=getEdgePixel(pixels2,x+1,y);
 				p7=getEdgePixel(pixels2,x-1,y+1); p8=getEdgePixel(pixels2,x,y+1); p9=getEdgePixel(pixels2,x+1,y+1);
 			}
-            switch (type) {
+            switch(type) {
                 case BLUR_MORE:
                     sum = (p1+p2+p3+p4+p5+p6+p7+p8+p9+4)/9;
                     break;
@@ -716,70 +668,94 @@ public class ByteProcessor extends ImageProcessor {
                     if (sum> 255) sum = 255;
                     break;
                 case MIN:
-                    sum = p5;
-                    if (p1<sum) sum = p1;
-                    if (p2<sum) sum = p2;
-                    if (p3<sum) sum = p3;
-                    if (p4<sum) sum = p4;
-                    if (p6<sum) sum = p6;
-                    if (p7<sum) sum = p7;
-                    if (p8<sum) sum = p8;
-                    if (p9<sum) sum = p9;
+					sum = this.caseMin(p1, p2, p3, p4, p5, p6, p7, p8, p9);
                     break;
                 case MAX:
-                    sum = p5;
-                    if (p1>sum) sum = p1;
-                    if (p2>sum) sum = p2;
-                    if (p3>sum) sum = p3;
-                    if (p4>sum) sum = p4;
-                    if (p6>sum) sum = p6;
-                    if (p7>sum) sum = p7;
-                    if (p8>sum) sum = p8;
-                    if (p9>sum) sum = p9;
+					sum = this.caseMax(p1, p2, p3, p4, p5, p6, p7, p8, p9);
                     break;
 				case ERODE:
-					if (p5==binaryBackground)
-						sum = binaryBackground;
-					else {
-						count = 0;
-						if (p1==binaryBackground) count++;
-						if (p2==binaryBackground) count++;
-						if (p3==binaryBackground) count++;
-						if (p4==binaryBackground) count++;
-						if (p6==binaryBackground) count++;
-						if (p7==binaryBackground) count++;
-						if (p8==binaryBackground) count++;
-						if (p9==binaryBackground) count++;							
-						if (count>=binaryCount)
-							sum = binaryBackground;
-						else
-						sum = binaryForeground;
-					}
+					sum = this.caseErode(binaryForeground, binaryBackground, p1, p2, p3, p4, p5, p6, p7, p8, p9);
 					break;
 				case DILATE:
-					if (p5==binaryForeground)
-						sum = binaryForeground;
-					else {
-						count = 0;
-						if (p1==binaryForeground) count++;
-						if (p2==binaryForeground) count++;
-						if (p3==binaryForeground) count++;
-						if (p4==binaryForeground) count++;
-						if (p6==binaryForeground) count++;
-						if (p7==binaryForeground) count++;
-						if (p8==binaryForeground) count++;
-						if (p9==binaryForeground) count++;							
-						if (count>=binaryCount)
-							sum = binaryForeground;
-						else
-							sum = binaryBackground;
-					}
+					sum = this.caseDilate(binaryForeground, binaryBackground, p1, p2, p3, p4, p5, p6, p7, p8, p9);
 					break;
             }
             pixels[x+y*width] = (byte)sum;
             x+=xinc; y+=yinc;
         }
     }
+
+	final int caseMin(int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, int p9){
+		int sum = p5;
+		if (p1<sum) sum = p1;
+		if (p2<sum) sum = p2;
+		if (p3<sum) sum = p3;
+		if (p4<sum) sum = p4;
+		if (p6<sum) sum = p6;
+		if (p7<sum) sum = p7;
+		if (p8<sum) sum = p8;
+		if (p9<sum) sum = p9;
+		return sum;
+	}
+
+	final int caseMax(int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, int p9){
+		int sum = p5;
+		if (p1>sum) sum = p1;
+		if (p2>sum) sum = p2;
+		if (p3>sum) sum = p3;
+		if (p4>sum) sum = p4;
+		if (p6>sum) sum = p6;
+		if (p7>sum) sum = p7;
+		if (p8>sum) sum = p8;
+		if (p9>sum) sum = p9;
+		return sum;
+	}
+
+	final int caseErode(int binaryForeground, int binaryBackground, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, int p9){
+		int sum = 0;
+		int count = 0;
+		if (p5==binaryBackground)
+			sum = binaryBackground;
+		else {
+			count = 0;
+			if (p1==binaryBackground) count++;
+			if (p2==binaryBackground) count++;
+			if (p3==binaryBackground) count++;
+			if (p4==binaryBackground) count++;
+			if (p6==binaryBackground) count++;
+			if (p7==binaryBackground) count++;
+			if (p8==binaryBackground) count++;
+			if (p9==binaryBackground) count++;							
+			if (count>=binaryCount)
+				sum = binaryBackground;
+			else
+				sum = binaryForeground;
+			}
+		return sum;
+	}
+
+	final int caseDilate(int binaryForeground, int binaryBackground, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, int p9){
+		int sum = 0;
+		int count = 0;
+		if (p5==binaryForeground)
+			sum = binaryForeground;
+		else {
+				count = 0;
+				if (p1==binaryForeground) count++;
+				if (p2==binaryForeground) count++;
+				if (p3==binaryForeground) count++;
+				if (p4==binaryForeground) count++;
+				if (p6==binaryForeground) count++;
+				if (p7==binaryForeground) count++;
+				if (p8==binaryForeground) count++;
+				if (p9==binaryForeground) count++;							
+				if (count>=binaryCount)
+					sum = binaryForeground;
+				else
+					sum = binaryBackground;
+				}
+		return sum;
+	}
 
 	final int getEdgePixel(byte[] pixels2, int x, int y) {
 		if (x<=0) x = 0;
